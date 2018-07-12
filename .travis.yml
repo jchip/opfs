@@ -8,4 +8,4 @@ notifications:
   email:
     - joel123@gmail.com
 before_install:
-  - npm install -g fyn
+  - npm install -g xclap-cli fyn
