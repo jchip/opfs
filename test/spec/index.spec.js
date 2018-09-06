@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs");
+const Path = require("path");
 
 describe("opfs", function() {
   process.env.NODE_ENV = "test";
@@ -86,5 +87,41 @@ describe("opfs", function() {
 
     opfs = require("../..");
     expect(opfs.$.rimraf).to.not.exist;
+  });
+
+  it("should save call stack by default", () => {
+    delete require.cache[require.resolve("../..")];
+    process.env.NODE_ENV = "production";
+
+    opfs = require("../..");
+
+    let error;
+    return opfs
+      .stat(Path.resolve("foo-bar"))
+      .catch(err => (error = err))
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.stack).includes("index.spec.js:");
+        expect(error.stack).includes("lib/wrap.js:");
+      });
+  });
+
+  it("should not save call stack if option is set to false", () => {
+    delete require.cache[require.resolve("../..")];
+    process.env.NODE_ENV = "production";
+
+    opfs = require("../..");
+
+    opfs._opfsSaveStack(false);
+
+    let error;
+    return opfs
+      .stat(Path.resolve("foo-bar"))
+      .catch(err => (error = err))
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.stack).not.includes("index.spec.js:");
+        expect(error.stack).not.includes("lib/wrap.js:");
+      });
   });
 });

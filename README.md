@@ -11,6 +11,7 @@ Yet another node [fs] wrapper.
 - All other original properties transferred as is.
 - No dependencies.
 - Optional pkgs promisified and added: [mkdirp], [rimraf].
+- Save full caller stack (10-20% performance penalty)
 
 ## Install
 
@@ -31,6 +32,10 @@ opfs._opfsSetPromise(require("bluebird"));
 // To use native Promise even if bluebird was found.
 
 opfs._opfsSetPromise();
+
+// To turn off save full caller stack
+
+opfs._opfsSaveStack(false);
 
 // promise APIs
 
